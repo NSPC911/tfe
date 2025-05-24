@@ -1,4 +1,3 @@
-from lzstring import LZString
 from maps import ICONS
 from os import getcwd, path, chdir
 import state
@@ -32,7 +31,6 @@ from WidgetsCore import (
 )
 
 log = state.log
-lzstring = LZString()
 
 
 class Application(App):

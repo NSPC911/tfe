@@ -5,16 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "textual-dev>=1.7.0",
-    "textual-web>=0.4.2",
     "humanize>=4.12.3",
-    "lzstring>=1.0.4",
-    "textual-autocomplete>=4.0.4",
-    "watchdog>=6.0.0",
     "pillow>=11.2.1",
+    "psutil>=7.0.0",
+    "textual[dev,syntax]>=3.2.0",
+    "textual-dev>=1.7.0",
+    "textual-autocomplete>=4.0.4",
     "textual-image[textual]>=0.8.2",
+    "textual-web>=0.4.2",
     "toml>=0.10.2",
-    "textual[syntax]>=3.2.0",
+    "watchdog>=6.0.0",
 ]
 
 [dependency-groups]

@@ -1,5 +1,6 @@
 """Module that holds variable states + other functions"""
 
+import base64
 from toml import loads, dumps
 from os import path
 from time import sleep
@@ -126,3 +127,9 @@ Thread(
     target=watch_config_file,
     daemon=True,
 ).start()
+
+def encode_base64(text: str) -> str:
+    return base64.b64encode(text.encode('utf-8')).decode('utf-8')
+
+def decode_base64(text: str) -> str:
+    return base64.b64decode(text.encode('utf-8')).decode('utf-8')

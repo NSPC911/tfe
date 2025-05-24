@@ -1,9 +1,9 @@
 from humanize import naturalsize
-from lzstring import LZString
 from maps import get_icon_for_file, get_icon_for_folder, EXT_TO_LANG_MAP, PIL_EXTENSIONS
 from os import listdir, path, walk, startfile, getcwd, chdir, scandir
 from pathlib import Path
 import state
+from string import ascii_uppercase
 from textual.app import ComposeResult, App
 from textual.containers import Container
 from textual.css.query import NoMatches
@@ -13,7 +13,6 @@ from textual_autocomplete import PathAutoComplete, TargetState, DropdownItem
 from textual_image.widget import AutoImage
 
 log = state.log
-lzstring = LZString()
 
 
 class PathDropdownItem(DropdownItem):
@@ -190,8 +189,8 @@ def update_file_list(
     for item in file_list_options:
         file_list.add_option(
             Option(
-                f"{item['icon']} {item['name']} {LZString.compressToEncodedURIComponent(item['name'])}",
-                id=LZString.compressToEncodedURIComponent(item["name"]),
+                f"{item['icon']} {item['name']}",
+                id=state.encode_base64(item["name"]),
             )
         )
     # session handler
@@ -259,8 +258,8 @@ def dummy_update_file_list(
     for item in file_list_options:
         file_list.add_option(
             Option(
-                f"{item['icon']} {item['name']} {LZString.compressToEncodedURIComponent(item['name'])}",
-                id=LZString.compressToEncodedURIComponent(item["name"]),
+                f"{item['icon']} {item['name']}",
+                id=state.encode_base64(item["name"]),
             )
         )
 
@@ -293,7 +292,7 @@ class FileList(OptionList):
         selected_option = event.option
         log(f"selected {selected_option}")
         # Get the file name from the option id
-        file_name = lzstring.decompressFromEncodedURIComponent(selected_option.id)
+        file_name = state.decode_base64(selected_option.id)
         # Check if it's a folder or a file
         if path.isdir(path.join(cwd, file_name)):
             # If it's a folder, navigate into it
@@ -314,7 +313,7 @@ class FileList(OptionList):
         )
         log(f"highlighted {highlighted_option}")
         # Get the file name from the option id
-        file_name = lzstring.decompressFromEncodedURIComponent(highlighted_option.id)
+        file_name = state.decode_base64(highlighted_option.id)
         # Check if it's a folder or a file
         file_path = path.join(getcwd(), file_name)
         if path.isdir(file_path):
@@ -421,3 +420,17 @@ class PreviewContainer(Container):
             cwd=folder_path,
         )
         self.border_title = "Folder Preview"
+
+class PinnedSidebar(OptionList):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.drives = [
+            f"{letter}:/" for letter in ascii_uppercase if path.exists(f"{letter}:/")
+        ]
+    def on_mount(self) -> None:
+        for drive in self.drives:
+            self.add_option(
+                Option(
+                    drive
+                )
+            )
